@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Awesome Public Datasets</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #fff;
+    color: #1a1a2e;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ── TOP NAVBAR ── */
+  #navbar {
+    height: 56px;
+    background: #fff;
+    border-bottom: 1px solid #e8e8e8;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    gap: 12px;
+    flex-shrink: 0;
+    z-index: 100;
+  }
+  #nav-logo {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, #4361ee, #7b2ff7);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  #nav-brand { flex: 1; }
+  #nav-brand h1 { font-size: 16px; font-weight: 700; color: #1a1a2e; line-height: 1.2; }
+  #nav-brand p  { font-size: 11.5px; color: #888; }
+  #nav-right { display: flex; align-items: center; gap: 10px; }
+  #nav-total {
+    font-size: 12px;
+    color: #555;
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    padding: 4px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  #nav-github {
+    display: flex; align-items: center; gap: 6px;
+    background: #1a1a2e;
+    color: #fff;
+    text-decoration: none;
+    font-size: 13px; font-weight: 500;
+    padding: 7px 14px;
+    border-radius: 7px;
+    transition: background 0.18s;
+    flex-shrink: 0;
+  }
+  #nav-github:hover { background: #2d2d4e; }
+  .nav-link {
+    font-size: 13px;
+    color: #555;
+    text-decoration: none;
+    padding: 6px 11px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    border: none;
+    background: none;
+    font-family: inherit;
+    white-space: nowrap;
+  }
+  .nav-link:hover { background: #f3f4f6; color: #1a1a2e; }
+  .nav-link.active-page { color: #4361ee; font-weight: 600; background: #eef0ff; }
+
+  /* ── BODY LAYOUT ── */
+  #layout {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* ── SIDEBAR ── */
+  #sidebar {
+    width: 270px;
+    flex-shrink: 0;
+    border-right: 1px solid #e8e8e8;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+  }
+  #cat-search-wrap {
+    padding: 12px 14px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  #category-search {
+    width: 100%;
+    border: 1px solid #e0e0e0;
+    border-radius: 7px;
+    padding: 8px 12px;
+    font-size: 13px;
+    color: #333;
+    background: #fafafa;
+    outline: none;
+    transition: border-color 0.18s, background 0.18s;
+  }
+  #category-search::placeholder { color: #aaa; }
+  #category-search:focus { border-color: #4361ee; background: #fff; }
+  #category-list {
+    overflow-y: auto;
+    flex: 1;
+    padding: 6px 0;
+  }
+  #category-list::-webkit-scrollbar { width: 4px; }
+  #category-list::-webkit-scrollbar-thumb { background: #e0e0e0; border-radius: 4px; }
+  .cat-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 16px;
+    font-size: 13.5px;
+    color: #444;
+    cursor: pointer;
+    border-radius: 0;
+    transition: background 0.13s, color 0.13s;
+    user-select: none;
+    margin: 0 6px;
+    border-radius: 6px;
+  }
+  .cat-item:hover { background: #f5f5f5; color: #1a1a2e; }
+  .cat-item.active { background: #4361ee; color: #fff; font-weight: 600; }
+  .cat-count {
+    font-size: 11px;
+    background: rgba(0,0,0,0.07);
+    color: inherit;
+    padding: 1px 7px;
+    border-radius: 10px;
+    opacity: 0.75;
+  }
+  .cat-item.active .cat-count { background: rgba(255,255,255,0.25); opacity: 1; }
+
+  /* ── MAIN CONTENT ── */
+  #main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #f9f9fb;
+  }
+  #search-bar-wrap {
+    padding: 14px 24px 0;
+    flex-shrink: 0;
+  }
+  #search-inner {
+    position: relative;
+    max-width: 100%;
+  }
+  #search-icon-svg {
+    position: absolute;
+    left: 13px; top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+    pointer-events: none;
+  }
+  #dataset-search {
+    width: 100%;
+    border: 1px solid #e0e0e0;
+    border-radius: 9px;
+    padding: 11px 16px 11px 40px;
+    font-size: 14px;
+    color: #333;
+    background: #fff;
+    outline: none;
+    transition: border-color 0.18s, box-shadow 0.18s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+  #dataset-search:focus { border-color: #4361ee; box-shadow: 0 0 0 3px rgba(67,97,238,0.1); }
+  #dataset-search::placeholder { color: #bbb; }
+
+  #content-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px 10px;
+    flex-shrink: 0;
+  }
+  #content-header h2 { font-size: 17px; font-weight: 700; color: #1a1a2e; }
+  #result-count { font-size: 12.5px; color: #888; }
+
+  #content-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 24px 24px;
+  }
+  #content-area::-webkit-scrollbar { width: 6px; }
+  #content-area::-webkit-scrollbar-thumb { background: #ddd; border-radius: 4px; }
+
+  /* ── SECTION HEADERS (All view) ── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin: 26px 0 12px;
+    padding-bottom: 9px;
+    border-bottom: 1.5px solid #ebebeb;
+  }
+  .section-header:first-child { margin-top: 4px; }
+  .s-count {
+    font-size: 11.5px;
+    font-weight: 500;
+    color: #888;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+
+  /* ── CARDS GRID ── */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 4px;
+  }
+
+  .dataset-card {
+    background: #fff;
+    border: 1px solid #ebebeb;
+    border-radius: 10px;
+    padding: 18px;
+    cursor: pointer;
+    transition: box-shadow 0.18s, border-color 0.18s, transform 0.15s;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .dataset-card:hover {
+    box-shadow: 0 4px 18px rgba(67,97,238,0.10);
+    border-color: #c5cfff;
+    transform: translateY(-2px);
+  }
+  .card-icon-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .card-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .card-title {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #1a1a2e;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex: 1;
+    padding-top: 2px;
+  }
+  .card-desc {
+    font-size: 12.5px;
+    color: #666;
+    line-height: 1.55;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex: 1;
+    margin-bottom: 12px;
+  }
+  .card-footer-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+  }
+  .card-cat-tag {
+    font-size: 10.5px;
+    font-weight: 600;
+    color: #4361ee;
+    background: #eef0ff;
+    padding: 3px 9px;
+    border-radius: 10px;
+    letter-spacing: 0.2px;
+  }
+  .card-arrow {
+    font-size: 12px;
+    color: #aaa;
+    font-weight: 500;
+    transition: color 0.15s;
+  }
+  .dataset-card:hover .card-arrow { color: #4361ee; }
+
+  /* ── EMPTY STATE ── */
+  #empty-state {
+    display: none;
+    text-align: center;
+    padding: 80px 20px;
+    color: #aaa;
+  }
+  #empty-state svg { margin-bottom: 16px; opacity: 0.35; }
+  #empty-state h3 { font-size: 17px; color: #555; margin-bottom: 6px; }
+  #empty-state p { font-size: 13px; }
+
+  /* ── MODAL ── */
+  #modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10,10,30,0.45);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+  }
+  #modal-overlay.open { display: flex; }
+  #modal {
+    background: #fff;
+    border-radius: 14px;
+    max-width: 560px;
+    width: 100%;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.18);
+    overflow: hidden;
+    animation: popIn 0.2s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.92) translateY(12px); }
+    to   { opacity: 1; transform: scale(1)    translateY(0); }
+  }
+  #modal-top {
+    padding: 22px 22px 18px;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  #modal-icon-big {
+    width: 52px; height: 52px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    flex-shrink: 0;
+  }
+  #modal-top-text { flex: 1; }
+  #modal-category-badge {
+    font-size: 10px; font-weight: 700;
+    color: #4361ee;
+    background: #eef0ff;
+    padding: 3px 10px;
+    border-radius: 10px;
+    display: inline-block;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  #modal-title { font-size: 16px; font-weight: 700; color: #1a1a2e; line-height: 1.35; padding-right: 28px; }
+  #modal-close {
+    position: absolute;
+    top: 14px; right: 14px;
+    background: #f5f5f5;
+    border: none;
+    color: #888;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s, color 0.15s;
+  }
+  #modal-close:hover { background: #ffe4e4; color: #e53e3e; }
+  #modal-body { padding: 20px 22px 22px; }
+  .modal-label {
+    font-size: 10.5px; font-weight: 700;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 7px;
+  }
+  #modal-desc {
+    font-size: 13.5px; color: #444;
+    line-height: 1.65;
+    margin-bottom: 18px;
+    background: #f9f9fb;
+    padding: 13px 15px;
+    border-radius: 8px;
+    border: 1px solid #f0f0f0;
+  }
+  #modal-url-box {
+    display: flex;
+    align-items: center;
+    background: #f9f9fb;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 10px 13px;
+    margin-bottom: 18px;
+    gap: 8px;
+  }
+  #modal-url-text {
+    font-size: 12px; color: #4361ee;
+    word-break: break-all; flex: 1;
+  }
+  #modal-actions { display: flex; gap: 10px; }
+  #modal-visit-btn {
+    flex: 1;
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    background: #4361ee; color: #fff;
+    border: none; border-radius: 9px;
+    padding: 11px 18px;
+    font-size: 13.5px; font-weight: 600;
+    cursor: pointer; text-decoration: none;
+    transition: background 0.18s;
+  }
+  #modal-visit-btn:hover { background: #3451d1; }
+  #modal-copy-btn {
+    background: #f5f5f5;
+    border: 1px solid #e5e5e5;
+    border-radius: 9px;
+    padding: 11px 15px;
+    font-size: 13px; color: #444;
+    cursor: pointer; font-weight: 500;
+    transition: border-color 0.15s, color 0.15s;
+    white-space: nowrap;
+  }
+  #modal-copy-btn:hover { border-color: #4361ee; color: #4361ee; }
+
+  /* ── INFO PAGES (About / Privacy / Terms) ── */
+  .info-page {
+    display: none;
+    position: fixed;
+    inset: 56px 0 0 0;
+    background: #f9f9fb;
+    z-index: 500;
+    overflow-y: auto;
+    animation: fadeSlideIn 0.2s ease;
+  }
+  .info-page.open { display: block; }
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .info-page-inner {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 48px 32px 80px;
+  }
+  .info-page-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #4361ee;
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-family: inherit;
+    margin-bottom: 28px;
+    padding: 0;
+    transition: opacity 0.15s;
+  }
+  .info-page-back:hover { opacity: 0.75; }
+  .info-hero {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1.5px solid #e8e8e8;
+  }
+  .info-hero-icon {
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    flex-shrink: 0;
+  }
+  .info-hero h1 { font-size: 24px; font-weight: 800; color: #1a1a2e; margin-bottom: 4px; }
+  .info-hero p  { font-size: 13.5px; color: #888; }
+  .info-section { margin-bottom: 32px; }
+  .info-section h2 {
+    font-size: 15px; font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .info-section h2 .sec-icon { font-size: 17px; }
+  .info-section p, .info-section li {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.75;
+  }
+  .info-section ul { padding-left: 20px; }
+  .info-section ul li { margin-bottom: 6px; }
+  .info-highlight {
+    background: #eef0ff;
+    border-left: 3px solid #4361ee;
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin-top: 10px;
+  }
+  .info-highlight p { color: #3451d1; font-size: 13.5px; }
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 12px;
+  }
+  .info-stat {
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    border-radius: 10px;
+    padding: 18px;
+    text-align: center;
+  }
+  .info-stat .stat-num { font-size: 26px; font-weight: 800; color: #4361ee; }
+  .info-stat .stat-lbl { font-size: 12px; color: #888; margin-top: 4px; }
+  .info-divider { border: none; border-top: 1.5px solid #ebebeb; margin: 28px 0; }
+  .info-last-updated { font-size: 12px; color: #aaa; text-align: right; margin-top: -20px; margin-bottom: 28px; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1080px) {
+    .cards-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  }
+  @media (max-width: 720px) {
+    body { overflow: auto; height: auto; }
+    #layout { flex-direction: column; overflow: visible; }
+    #sidebar {
+      width: 100%; height: auto;
+      border-right: none; border-bottom: 1px solid #e8e8e8;
+    }
+    #category-list { max-height: 200px; }
+    #main { overflow: visible; }
+    #content-area { overflow: visible; }
+    .cards-grid { grid-template-columns: 1fr !important; }
+    #navbar { padding: 0 14px; }
+    #nav-brand h1 { font-size: 14px; }
+    #nav-total { display: none; }
+    .nav-link span { display: none; }
+    #search-bar-wrap { padding: 10px 14px 0; }
+    #content-area { padding: 0 14px 20px; }
+    #content-header { padding: 12px 14px 8px; }
+    .info-grid { grid-template-columns: 1fr !important; }
+    .info-page-inner { padding: 28px 18px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP NAVBAR -->
+<header id="navbar">
+  <div id="nav-logo">📊</div>
+  <div id="nav-brand">
+    <h1>Awesome Public Datasets</h1>
+    <p>awesomedata/awesome-public-datasets · Open dataset directory</p>
+  </div>
+  <div id="nav-right">
+    <span id="nav-total"></span>
+    <button class="nav-link" onclick="openPage('about')"><span>About</span></button>
+    <button class="nav-link" onclick="openPage('privacy')"><span>Privacy Policy</span></button>
+    <button class="nav-link" onclick="openPage('terms')"><span>Terms &amp; Conditions</span></button>
+    <a id="nav-github" href="https://github.com/awesomedata/awesome-public-datasets" target="_blank" rel="noopener">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+      GitHub
+    </a>
+  </div>
+</header>
+
+<!-- LAYOUT -->
+<div id="layout">
+
+  <!-- SIDEBAR -->
+  <nav id="sidebar">
+    <div id="cat-search-wrap">
+      <input type="text" id="category-search" placeholder="Search categories..." />
+    </div>
+    <div id="category-list"></div>
+  </nav>
+
+  <!-- MAIN -->
+  <div id="main">
+    <div id="search-bar-wrap">
+      <div id="search-inner">
+        <svg id="search-icon-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" id="dataset-search" placeholder="Search datasets by name or description..." />
+      </div>
+    </div>
+    <div id="content-header">
+      <h2 id="heading-text">All Datasets</h2>
+      <span id="result-count"></span>
+    </div>
+    <div id="content-area">
+      <div id="dataset-grid"></div>
+      <div id="empty-state">
+        <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <h3>No results found</h3>
+        <p>Try a different search term or browse another category.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div id="modal-overlay">
+  <div id="modal" style="position:relative;">
+    <div id="modal-top">
+      <div id="modal-icon-big"></div>
+      <div id="modal-top-text">
+        <div id="modal-category-badge"></div>
+        <div id="modal-title"></div>
+      </div>
+    </div>
+    <button id="modal-close">✕</button>
+    <div id="modal-body">
+      <div class="modal-label">Description</div>
+      <div id="modal-desc"></div>
+      <div class="modal-label">Dataset URL</div>
+      <div id="modal-url-box">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+        <span id="modal-url-text"></span>
+      </div>
+      <div id="modal-actions">
+        <a id="modal-visit-btn" href="#" target="_blank" rel="noopener noreferrer">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Visit Dataset
+        </a>
+        <button id="modal-copy-btn">📋 Copy URL</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ABOUT PAGE ══ -->
+<div class="info-page" id="page-about">
+  <div class="info-page-inner">
+    <button class="info-page-back" onclick="closePage('about')">
+      ← Back to Datasets
+    </button>
+    <div class="info-hero">
+      <div class="info-hero-icon" style="background:#eef0ff">📊</div>
+      <div>
+        <h1>About Awesome Public Datasets</h1>
+        <p>A curated, community-maintained directory of high-quality open datasets</p>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-stat"><div class="stat-num" id="about-ds-count">200+</div><div class="stat-lbl">Datasets</div></div>
+      <div class="info-stat"><div class="stat-num">33</div><div class="stat-lbl">Categories</div></div>
+      <div class="info-stat"><div class="stat-num">100%</div><div class="stat-lbl">Free &amp; Open</div></div>
+    </div>
+
+    <hr class="info-divider">
+
+    <div class="info-section">
+      <h2><span class="sec-icon">🎯</span> What is this?</h2>
+      <p>This website is an interactive browser for the <strong>awesomedata/awesome-public-datasets</strong> GitHub repository — a topic-centric list of high-quality open datasets for researchers, data scientists, students, and developers. Every dataset listed here is publicly accessible and free to use.</p>
+      <div class="info-highlight"><p>This is a community-driven project. The original repository is maintained by volunteers who continuously add, verify, and categorize datasets from across the web.</p></div>
+    </div>
+
+    <div class="info-section">
+      <h2><span class="sec-icon">📂</span> What's inside?</h2>
+      <p>The directory spans 33 topic categories including:</p>
+      <ul>
+        <li><strong>Science & Research</strong> — Biology, Chemistry, Physics, Neuroscience, EarthScience</li>
+        <li><strong>Society & Economy</strong> — Economics, Finance, Government, Education, Healthcare</li>
+        <li><strong>Technology</strong> — MachineLearning, ComputerNetworks, CyberSecurity, Software</li>
+        <li><strong>Geospatial & Environment</strong> — GIS, Climate+Weather, Transportation</li>
+        <li><strong>Culture & Media</strong> — Entertainment, Sports, Museums, NaturalLanguage</li>
+      </ul>
+    </div>
+
+    <div class="info-section">
+      <h2><span class="sec-icon">🔍</span> How to use this site</h2>
+      <ul>
+        <li>Browse by <strong>category</strong> using the left sidebar</li>
+        <li><strong>Search</strong> across all datasets using the search bar at the top</li>
+        <li><strong>Click any card</strong> to view the full description and access the dataset link</li>
+        <li>Use the <strong>Visit Dataset</strong> button in the popup to go directly to the data source</li>
+      </ul>
+    </div>
+
+    <div class="info-section">
+      <h2><span class="sec-icon">🌐</span> Source</h2>
+      <p>All dataset metadata is sourced from the open-source GitHub repository <a href="https://github.com/awesomedata/awesome-public-datasets" target="_blank" style="color:#4361ee">awesomedata/awesome-public-datasets</a>. This site is a read-only browser — it does not modify, store, or redistribute the underlying datasets.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PRIVACY POLICY PAGE ══ -->
+<div class="info-page" id="page-privacy">
+  <div class="info-page-inner">
+    <button class="info-page-back" onclick="closePage('privacy')">
+      ← Back to Datasets
+    </button>
+    <div class="info-hero">
+      <div class="info-hero-icon" style="background:#d1fae5">🔒</div>
+      <div>
+        <h1>Privacy Policy</h1>
+        <p>How we handle your data and protect your privacy</p>
+      </div>
+    </div>
+    <p class="info-last-updated">Last updated: March 2026</p>
+
+    <div class="info-section">
+      <h2><span class="sec-icon">👋</span> Overview</h2>
+      <p>This website ("Awesome Public Datasets Browser") is a static, client-side application. We are committed to protecting your privacy. This policy describes what information we collect, how we use it, and your rights.</p>
+      <div class="info-highlight"><p>We do not collect, store, or transmit any personally identifiable information. All browsing and searching is performed entirely in your browser.</p></div>
+    </div>
+
+    <div class="info-section">
+      <h2><span class="sec-icon">📋</span> Information We Do Not Collect</h2>
+      <ul>
+        <li>We do not use cookies or local storage</li>
+        <li>We do not collect names, email addresses, or any personal identifiers</li>
+        <li>We do not track your search queries or browsing history</li>
+        <li>We do not use analytics or tracking scripts of any kind</li>
+        <li>We do not share data with any third parties</li>
+      </ul>
+    </div>
+
+    <div class="info-section">
+      <h2><span class="sec-icon">🔗</span> Third-Party Links</h2>
+      <p>This site contains links to external datasets and repositories hosted by third parties (e.g. GitHub, Kaggle, NOAA, NIH). When you click on a dataset link, you leave this site and are subject to the privacy policies of those external services. We are not responsible for the privacy practices or content of external websites.</p>
+    </div>
+
+    <div class="info-section">
+      <h2><span class="sec-icon">🛡️</span> Data Security</h2>
+      <p>Since we do not collect any user data, there is no user data stored on any server. The application runs entirely in your browser. All dataset metadata is embedded statically in the HTML file.</p>
+    </div>
+
+    <div class="info-section">
+      <h2><span class="sec-icon">✉️</span> Contact</h2>
+      <p>If you have questions about this privacy policy, you may open an issue on the <a href="https://github.com/awesomedata/awesome-public-datasets" target="_blank" style="color:#4361ee">GitHub repository</a>.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TERMS & CONDITIONS PAGE ══ -->
+<div class="info-page" id="page-terms">
+  <div class="info-page-inner">
+    <button class="info-page-back" onclick="closePage('terms')">
+      ← Back to Datasets
+    </button>
+    <div class="info-hero">
+      <div class="info-hero-icon" style="background:#fef3c7">📜</div>
+      <div>
+        <h1>Terms &amp; Conditions</h1>
+        <p>Terms of use for the Awesome Public Datasets browser</p>
+      </div>
+    </div>
+    <p class="info-last-updated">Last updated: March 2026</p>
+
+    <div class="info-section">
+      <h2><span class="sec-icon">✅</span> Acceptance of Terms</h2>
+      <p>By accessing and using this website, you accept and agree to be bound by these Terms and Conditions. If you do not agree to these terms, please do not use this site.</p>
+    </div>
+
+    <div class="info-section">
+      <h2><span class="sec-icon">📖</span> Purpose & Use</h2>
+      <p>This website is provided as a free, informational directory service. It is intended solely as a browser and reference tool for locating publicly available datasets. You may use this site for:</p>
+      <ul>
+        <li>Personal research and learning</li>
+        <li>Academic and educational purposes</li>
+        <li>Professional data discovery</li>
+        <li>Non-commercial exploration</li>
+      </ul>
+    </div>
+
+    <div class="info-section">
+      <h2><span class="sec-icon">⚠️</span> Disclaimer of Warranties</h2>
+      <p>This site is provided on an "as is" and "as available" basis without warranties of any kind. We do not warrant that:</p>
+      <ul>
+        <li>Dataset links will remain active or accessible at all times</li>
+        <li>The information listed is complete, accurate, or up-to-date</li>
+        <li>The site will be free from errors or interruptions</li>
+      </ul>
+      <div class="info-highlight"><p>All datasets listed are hosted and maintained by their respective owners. We have no control over their availability, content, or licensing terms.</p></div>
+    </div>
+
+    <div class="info-section">
+      <h2><span class="sec-icon">⚖️</span> Dataset Licensing</h2>
+      <p>Each dataset linked from this site may be subject to its own license and terms of use. Before using any dataset for research, commercial, or other purposes, you are solely responsible for reviewing and complying with the applicable license of that dataset. Common licenses you may encounter include CC0, CC-BY, ODC-BY, and various government open data licenses.</p>
+    </div>
+
+    <div class="info-section">
+      <h2><span class="sec-icon">🚫</span> Prohibited Activities</h2>
+      <ul>
+        <li>Using this site to harvest or scrape data in a manner that disrupts service</li>
+        <li>Misrepresenting the source or ownership of any listed dataset</li>
+        <li>Using this site for any unlawful purpose</li>
+      </ul>
+    </div>
+
+    <div class="info-section">
+      <h2><span class="sec-icon">🔄</span> Changes to Terms</h2>
+      <p>We reserve the right to modify these Terms at any time. Continued use of this site after any modifications constitutes acceptance of the new Terms.</p>
+    </div>
+
+    <div class="info-section">
+      <h2><span class="sec-icon">✉️</span> Contact</h2>
+      <p>For questions regarding these Terms, please open an issue on the <a href="https://github.com/awesomedata/awesome-public-datasets" target="_blank" style="color:#4361ee">GitHub repository</a>.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const DATASETS = {
+  "Agriculture": [
+    { name: "The global dataset of historical yields for major crops 1981–2016", url: "https://doi.pangaea.de/10.1594/PANGAEA.909132", desc: "A comprehensive global dataset tracking historical yields for major crops from 1981 to 2016, useful for agricultural research and food security analysis." },
+    { name: "Hyperspectral benchmark dataset on soil moisture", url: "https://doi.org/10.5281/zenodo.1227837", desc: "A benchmark dataset measured in a five-day field campaign, capturing hyperspectral data for soil moisture assessment and agricultural remote sensing." },
+    { name: "Lemons quality control dataset", url: "https://github.com/softwaremill/lemon-dataset", desc: "Dataset prepared to investigate automatic detection of fruit quality problems, containing annotated images of lemons for machine vision and quality control tasks." },
+    { name: "Optimized Soil Adjusted Vegetation Index", url: "https://www.indexdatabase.de/db/i-single.php?id=63", desc: "A tool and dataset for working with remote sensing vegetation indices, particularly useful for monitoring crop health and land cover analysis." },
+    { name: "U.S. Department of Agriculture's Nutrient Database", url: "https://fdc.nal.usda.gov/download-datasets", desc: "The USDA's National Nutrient Database provides comprehensive nutritional data for thousands of foods, widely used in dietary research and health applications." },
+    { name: "U.S. Department of Agriculture's PLANTS Database", url: "https://plants.usda.gov/downloads", desc: "Contains nearly 7 million records on plant species in the United States and territories, including characteristics, distribution, and ecological data." }
+  ],
+  "Architecture": [
+    { name: "Swiss Apartment Models", url: "https://zenodo.org/record/7070952", desc: "Detailed data on 42,207 apartments (242,257 records) from Swiss real estate, useful for architectural analysis, urban planning and housing research." }
+  ],
+  "Biology": [
+    { name: "1000 Genomes", url: "https://www.internationalgenome.org/data", desc: "The largest public catalogue of human variation and genotype data, created between 2008–2015, providing deep whole-genome sequencing data from 2,504 individuals across 26 populations." },
+    { name: "ANHIR - Automatic Non-rigid Histological Image Registration", url: "https://anhir.grand-challenge.org/", desc: "A dataset of 2D histological microscopy tissue slices for benchmarking automatic non-rigid image registration algorithms." },
+    { name: "American Gut (Microbiome Project)", url: "https://github.com/biocore/American-Gut", desc: "The largest crowdsourced microbiome project in the world, providing gut microbiome data from thousands of participants across the United States." },
+    { name: "BCNB - Breast Cancer Core-Needle Biopsy", url: "https://bupt-ai-cz.github.io/BCNB/", desc: "Whole slide images (WSIs) of 1058 patients with annotated tumor regions, designed for breast cancer diagnosis and deep learning research." },
+    { name: "Broad Bioimage Benchmark Collection (BBBC)", url: "https://www.broadinstitute.org/bbbc", desc: "A collection of publicly available image datasets for benchmarking biological image analysis algorithms, maintained by the Broad Institute." },
+    { name: "Broad Cancer Cell Line Encyclopedia (CCLE)", url: "http://www.broadinstitute.org/ccle/home", desc: "Detailed genetic and pharmacological characterization of a large panel of human cancer cell lines, enabling cancer biology and drug discovery research." },
+    { name: "CIMA Dataset", url: "https://cmp.felk.cvut.cz/~borovji3/?page=dataset", desc: "A collection of images of 2D histological microscopy tissue slices with corresponding landmarks for image registration research." },
+    { name: "Cell Image Library", url: "http://www.cellimagelibrary.org/home", desc: "A public and easily accessible resource database of images, videos, and animations of cells, providing data for cell biology research." },
+    { name: "Complete Genomics Public Data", url: "https://completegenomics.mgiamericas.com/demodata", desc: "Diverse whole human genomes freely available for research, generated using Complete Genomics' sequencing technology." },
+    { name: "CytoImageNet", url: "https://www.kaggle.com/stanleyhua/cytoimagenet", desc: "A large-scale pretraining dataset for bioimage analysis containing 890,737 total grayscale microscopy images from 894 classes." },
+    { name: "EBI ArrayExpress", url: "http://www.ebi.ac.uk/arrayexpress/", desc: "A database of functional genomics experiments including gene expression data from microarray and sequencing platforms, hosted by the European Bioinformatics Institute." },
+    { name: "EBI Protein Data Bank in Europe", url: "https://www.ebi.ac.uk/emdb/", desc: "The Electron Microscopy Data Bank (EMDB) is a public repository for electron microscopy density maps of macromolecular complexes and subcellular structures." },
+    { name: "ENCODE Project", url: "https://www.encodeproject.org", desc: "The Encyclopedia of DNA Elements (ENCODE) is an ongoing collaborative research program that aims to identify all functional elements in the human and mouse genome sequences." },
+    { name: "Electron Microscopy Pilot Image Archive (EMPIAR)", url: "http://www.ebi.ac.uk/pdbe/emdb/empiar/", desc: "A public resource for raw, 2D electron microscopy images used to build 3D structures of proteins and biological molecules." },
+    { name: "Ensembl Genomes", url: "https://ensemblgenomes.org/", desc: "A scientific project providing genome-scale data from non-vertebrate species, including plants, fungi, bacteria, and invertebrates." },
+    { name: "Gene Expression Omnibus (GEO)", url: "http://www.ncbi.nlm.nih.gov/geo/", desc: "A public functional genomics data repository supporting MIAME-compliant data submissions, including microarray, next-generation sequencing, and other high-throughput functional genomic data." },
+    { name: "Gene Ontology (GO)", url: "http://geneontology.org/docs/download-go-annotations/", desc: "The Gene Ontology project provides structured, controlled vocabulary for describing gene and gene product attributes across all species." },
+    { name: "Global Biotic Interactions (GloBI)", url: "https://github.com/jhpoelen/eol-globi-data/wiki#accessing-species-interaction-data", desc: "Provides a way to find species interaction data (e.g., predator-prey, pollinator-plant) by combining existing datasets into a single searchable database." },
+    { name: "Harvard Medical School (HMS) LINCS Project", url: "http://lincs.hms.harvard.edu", desc: "The Library of Integrated Network-based Cellular Signatures generates and analyzes reference molecular signatures that describe how cells respond to perturbations." },
+    { name: "Human Genome Diversity Project", url: "http://www.hagsc.org/hgdp/files.html", desc: "A Stanford University study of genetic diversity among human populations worldwide, providing data on hundreds of individuals from dozens of populations." },
+    { name: "Human Microbiome Project (HMP)", url: "http://www.hmpdacc.org/reference_genomes/reference_genomes.php", desc: "The HMP characterized microbial communities found at multiple human body sites and looked for correlations between changes in the microbiome and human health. Sequenced over 2,000 reference genomes." },
+    { name: "KEGG - Kyoto Encyclopedia of Genes and Genomes", url: "http://www.genome.jp/kegg/", desc: "A database resource for understanding high-level functions and utilities of the biological system, such as the cell and the organism, from molecular-level information." },
+    { name: "NCBI Proteins Database", url: "http://www.ncbi.nlm.nih.gov/guide/proteins/#databases", desc: "A collection of protein sequence databases maintained by the National Center for Biotechnology Information, including RefSeq, UniProtKB/Swiss-Prot, and others." },
+    { name: "NCBI Taxonomy", url: "http://www.ncbi.nlm.nih.gov/taxonomy", desc: "The NCBI Taxonomy database is a curated classification and nomenclature for all of the organisms in the public sequence databases." },
+    { name: "NCI Genomic Data Commons", url: "https://gdc.cancer.gov/access-data/gdc-data-portal", desc: "A robust, data-driven platform that supports importing and standardizing cancer genomics data from cancer research programs, enabling analysis and data sharing." },
+    { name: "OpenSNP genotypes data", url: "https://opensnp.org/", desc: "A platform where customers of direct-to-consumer genetic tests (like 23andMe) can freely share their genotypes and phenotypes." },
+    { name: "Palmer Penguins", url: "https://allisonhorst.github.io/palmerpenguins/", desc: "A great dataset for data exploration and visualization as an alternative to iris, containing size measurements for three penguin species observed on three islands in Antarctica." },
+    { name: "Pathguide - Protein-Protein Interactions Catalog", url: "http://www.pathguide.org/", desc: "A meta-database containing information about 702 biological pathway related resources and protein-protein interaction databases." },
+    { name: "Protein Data Bank (PDB)", url: "http://www.rcsb.org/", desc: "The worldwide repository of information about the 3D structures of large biological molecules, including proteins and nucleic acids. Contains over 200,000 structures." },
+    { name: "Psychiatric Genomics Consortium", url: "https://www.med.unc.edu/pgc/downloads", desc: "The world's largest consortium in psychiatric genomics, providing GWAS data from studies of autism spectrum disorder, ADHD, bipolar disorder, schizophrenia, and other conditions." },
+    { name: "PubChem Project", url: "https://pubchem.ncbi.nlm.nih.gov/", desc: "The world's largest collection of freely accessible chemical information. Search chemicals by name, molecular formula, structure, and other identifiers." },
+    { name: "Sanger Catalogue of Somatic Mutations in Cancer (COSMIC)", url: "http://cancer.sanger.ac.uk/cosmic", desc: "The world's largest and most comprehensive resource for exploring the impact of somatic mutations in human cancer." },
+    { name: "Sequence Read Archive (SRA)", url: "http://www.ncbi.nlm.nih.gov/Traces/sra/", desc: "The NIH's Sequence Read Archive stores raw sequence data from next-generation sequencing technologies, representing the largest publicly available repository of high throughput sequencing data." },
+    { name: "Serratus", url: "https://github.com/ababaian/serratus/wiki/Access-Data-Release", desc: "Ultra-large scale reanalysis of 7.1 million RNA/DNA sequencing datasets for discovery of coronaviruses and other RNA viruses." },
+    { name: "The Cancer Genome Atlas (TCGA)", url: "https://gdac.broadinstitute.org/", desc: "A comprehensive molecular characterization of 33 cancer types including genome sequencing, RNA sequencing, and proteomic data from over 11,000 patients, via the Broad Institute GDAC." },
+    { name: "The Catalogue of Life", url: "https://www.catalogueoflife.org/data/download", desc: "A quality-assured checklist of more than 1.8 million species of all organisms, used as the biological taxonomic backbone for biodiversity informatics." },
+    { name: "Universal Protein Resource (UniProt)", url: "http://www.uniprot.org/downloads", desc: "A comprehensive, high-quality and freely accessible resource of protein sequence and functional information, maintained by the UniProt Consortium." },
+    { name: "Rfam Database", url: "https://docs.rfam.org/en/latest/database.html", desc: "A collection of RNA families, each represented by multiple sequence alignments, consensus secondary structures, and covariance models." }
+  ],
+  "Chemistry": [
+    { name: "Ionic Liquids Database - ILThermo (NIST)", url: "https://ilthermo.boulder.nist.gov", desc: "A searchable database of thermodynamic and transport property data for ionic liquids maintained by NIST." },
+    { name: "NIST Chemistry WebBook", url: "https://webbook.nist.gov/chemistry/", desc: "Provides chemical and physical property data for chemical species maintained by NIST, including thermochemical data, spectroscopic data, and reaction thermochemistry." },
+    { name: "ChemSpider", url: "http://www.chemspider.com/", desc: "A free chemical structure database providing fast text and structure search access to over 100 million structures from hundreds of data sources." },
+    { name: "PubChem Compound Database", url: "https://pubchem.ncbi.nlm.nih.gov/", desc: "An open chemistry database maintained by NIH containing information on chemical structures, identifiers, chemical and physical properties, biological activities, patents, health, safety, toxicity data, and more." }
+  ],
+  "Climate+Weather": [
+    { name: "Actuaries Climate Index", url: "http://actuariesclimateindex.org/data/", desc: "A quarterly index measuring climate extremes to help actuaries, public policymakers and the general public monitor trends in extreme climate events across the US and Canada." },
+    { name: "Australian Weather (BOM)", url: "https://www.bom.gov.au/climate/data/index.shtml", desc: "The Australian Bureau of Meteorology's climate data portal providing access to historical weather observations, climate records, and statistics." },
+    { name: "Aviation Weather Center", url: "https://aviationweather.gov/adds/dataserver", desc: "Provides consistent, timely and accurate weather information for aviation safety, including METARs, TAFs, PIREPs and model data." },
+    { name: "Brazilian Weather - Historical Data", url: "http://sinda.crn.inpe.br/PCD/SITE/novo/site/historico/index.php", desc: "Historical climate and weather data from Brazil's INPE (National Institute for Space Research), covering precipitation, temperature, and other meteorological variables." },
+    { name: "C3S Climate Data Store (CDS)", url: "https://cds.climate.copernicus.eu/cdsapp#!/home", desc: "Copernicus Climate Change Service's one-stop shop for several climate datasets, including ERA5 reanalysis data, CMIP6 projections, and satellite observations." },
+    { name: "Canadian Meteorological Centre", url: "http://weather.gc.ca/grib/index_e.html", desc: "Provides access to numerical weather prediction (NWP) model data in GRIB2 format from Environment and Climate Change Canada." },
+    { name: "Caravan - Large-sample Hydrology Dataset", url: "https://zenodo.org/record/7540792", desc: "An open community dataset of meteorological and hydrological time series for over 6,000 catchments around the world, designed for large-sample hydrology research." },
+    { name: "Climate Data from UEA (updated monthly)", url: "https://www.uea.ac.uk/web/groups-and-centres/climatic-research-unit/data", desc: "Monthly updated climate datasets from the University of East Anglia's Climatic Research Unit, including the influential HadCRUT global temperature dataset." },
+    { name: "Dutch Weather (KNMI)", url: "https://data.knmi.nl/datasets", desc: "The KNMI Data Center portal provides access to meteorological data from the Netherlands, including weather station data, radar imagery, and climate projections." },
+    { name: "European Climate Assessment & Dataset (ECA&D)", url: "https://www.ecad.eu/", desc: "A dataset of daily observations at meteorological stations spread over Europe and the Mediterranean, covering over 60 climate variables." },
+    { name: "German Climate Data Center (DWD)", url: "https://cdc.dwd.de/portal/", desc: "Germany's National Meteorological Service (Deutscher Wetterdienst) climate data portal, providing long-term climate records and current observations." },
+    { name: "Global Climate Data Since 1929", url: "http://en.tutiempo.net/climate", desc: "Historical climate observations worldwide since 1929, including temperature, precipitation, humidity, wind, and pressure data from thousands of weather stations globally." },
+    { name: "NOAA Climate Datasets", url: "http://www.ncdc.noaa.gov/data-access/quick-links", desc: "Quick links to NOAA's National Centers for Environmental Information (NCEI) climate datasets, including GSOD, GHCN, and hurricane tracks." },
+    { name: "NOAA Realtime Weather Models", url: "http://www.ncdc.noaa.gov/data-access/model-data/model-datasets/numerical-weather-prediction", desc: "Access to numerical weather prediction model datasets from NOAA, including GFS, NAM, RAP, and other operational forecast models." },
+    { name: "Open-Meteo - Open-Source Weather API", url: "https://open-meteo.com", desc: "An open-source weather API with free access for non-commercial use, providing global weather forecasts with 1–11 km resolution using various weather models." },
+    { name: "The World Bank Climate Change Data", url: "http://data.worldbank.org/developers/climate-data-api", desc: "World Bank's open data resources for climate change, providing historical climate data and future climate projections for countries and regions worldwide." },
+    { name: "WU Historical Weather Worldwide", url: "https://www.wunderground.com/history/index.html", desc: "Weather Underground's historical weather data covering thousands of weather stations worldwide, with records going back decades for most locations." },
+    { name: "Washington Post Climate Data (2°C+)", url: "https://github.com/washingtonpost/data-2C-beyond-the-limit-usa", desc: "The Washington Post's dataset on warming temperatures in the United States, showing how average summer temperatures have increased since the pre-industrial era." },
+    { name: "WorldClim - Global Climate Data", url: "http://www.worldclim.org", desc: "Free global climate data including current conditions, future climate projections, and historical climate data at spatial resolutions from 30 seconds to 10 minutes." }
+  ],
+  "ComplexNetworks": [
+    { name: "AMiner Citation Network Dataset", url: "http://aminer.org/citation", desc: "A large-scale citation network dataset for academic papers, including co-author networks, paper citation graphs, and research topic models." },
+    { name: "CrossRef DOI URLs", url: "https://archive.org/details/doi-urls", desc: "A collection of digital object identifier (DOI) URLs from CrossRef, useful for mapping scholarly publications and citation networks." },
+    { name: "DBLP Citation Dataset", url: "https://kdl.cs.umass.edu/display/public/DBLP", desc: "A citation network dataset derived from the DBLP computer science bibliography, containing papers and their citation relationships." },
+    { name: "DIMACS Road Networks Collection", url: "http://www.dis.uniroma1.it/challenge9/download.shtml", desc: "Road network graph data used in the DIMACS Shortest Paths Challenge, representing real road networks for algorithmic benchmarking." },
+    { name: "NBER Patent Citations", url: "http://nber.org/patents/", desc: "The National Bureau of Economic Research patent citations dataset, containing information on over 3 million U.S. patents and 16 million citation links." },
+    { name: "Network Repository with Interactive Analysis Tools", url: "http://networkrepository.com/", desc: "The first interactive data and network data repository with real-time visual analytics, containing hundreds of graph and network datasets across multiple domains." },
+    { name: "Protein-protein Interaction Network (Yeast)", url: "http://vlado.fmf.uni-lj.si/pub/networks/data/bio/Yeast/Yeast.htm", desc: "A protein-protein interaction network of the yeast S. cerevisiae, commonly used as a benchmark in network analysis and bioinformatics research." },
+    { name: "Small Network Data", url: "http://www-personal.umich.edu/~mejn/netdata/", desc: "A collection of small real-world network datasets maintained by Mark Newman at the University of Michigan, including social, biological, and technological networks." },
+    { name: "Stanford Large Network Dataset Collection", url: "https://snap.stanford.edu/data/", desc: "SNAP's collection of large network datasets, including social networks, web graphs, road networks, and internet networks for network science research." }
+  ],
+  "ComputerNetworks": [
+    { name: "CAIDA Data", url: "http://www.caida.org/data/overview/", desc: "The Center for Applied Internet Data Analysis provides datasets on Internet traffic, topology, and routing for network research." },
+    { name: "ClueWeb09 Dataset", url: "http://lemurproject.org/clueweb09.php/", desc: "A dataset of about 1 billion web pages in 10 languages collected in 2009, used for information retrieval and web-scale language processing research." },
+    { name: "CRAWDAD Wireless Network Dataset", url: "https://crawdad.org", desc: "Community Resource for Archiving Wireless Data At Dartmouth, providing traces of real wireless network usage for mobile computing research." },
+    { name: "CommonCrawl Web Data", url: "http://commoncrawl.org/the-data/", desc: "An open repository of web crawl data that can be freely accessed and analyzed, containing petabytes of data collected since 2008." },
+    { name: "Packet-level Traces", url: "http://www.simpleweb.org/wiki/index.php/Traces", desc: "Packet-level network traffic traces from the SimpleWeb repository, useful for network performance analysis, anomaly detection and traffic classification." },
+    { name: "RIPE Internet Measurement Data", url: "https://data.ripe.net/", desc: "Internet measurement data from RIPE NCC, including BGP routing data, DNS data, and Internet topology measurements from the RIPE Atlas platform." },
+    { name: "University of Oregon Route Views Project", url: "http://www.routeviews.org/routeviews/", desc: "BGP routing table archives from multiple collector sites worldwide, providing data for Internet routing research and AS-level topology analysis." }
+  ],
+  "CyberSecurity": [
+    { name: "Unified Host and Network Dataset", url: "https://github.com/lanl/unified-host-network-dataset", desc: "A unified host and network dataset from Los Alamos National Laboratory for cybersecurity research, including network flows, Windows events, and DNS lookups." },
+    { name: "Internet-Wide Scan Data Repository (Scans.io)", url: "https://scans.io/", desc: "A public data repository of Internet-wide scans, including ZMap and Masscan results, maintained by the University of Michigan for network security research." },
+    { name: "Malware Training Sets", url: "http://marcoramilli.blogspot.com/2016/12/malware-training-sets-machine-learning.html", desc: "Curated malware training sets for machine learning, providing labeled samples for building malware detection and classification models." },
+    { name: "PCAP Files (Packet Captures)", url: "http://www.netresec.com/?page=PCAP4SICS", desc: "A collection of PCAP files for ICS/SCADA cybersecurity research, allowing analysis of industrial control system network protocols." },
+    { name: "SecRepo - Repository of Security Data Samples", url: "http://www.secrepo.com/", desc: "A repository of security data samples, including malware, logs, network captures, and other artifacts for security research and machine learning." },
+    { name: "Threat Exchange", url: "https://developers.facebook.com/docs/threat-exchange", desc: "Facebook's platform for sharing threat intelligence data between trusted organizations, enabling collaborative cybersecurity defense." },
+    { name: "UNSW-NB15 Network Intrusion Dataset", url: "https://research.unsw.edu.au/projects/unsw-nb15-dataset", desc: "A comprehensive network intrusion dataset from the University of New South Wales containing 2,540,044 records with 49 features for intrusion detection research." }
+  ],
+  "DataChallenges": [
+    { name: "Challenges in Machine Learning (chalearn.org)", url: "http://www.chalearn.org/", desc: "A foundation for the organization of challenges in machine learning, providing datasets for competitions in areas like action recognition, handwriting recognition, and causality." },
+    { name: "DrivenData", url: "https://www.drivendata.org/", desc: "Hosts machine learning competitions for social impact, with datasets spanning public health, international development, education, and more." },
+    { name: "InnoCentive", url: "https://www.innocentive.com/", desc: "An open innovation and crowdsourcing platform that offers challenges across scientific, technology, and business domains with associated datasets." },
+    { name: "Kaggle", url: "https://www.kaggle.com/", desc: "The world's largest data science community with powerful tools and resources, hosting thousands of public datasets and competitions." },
+    { name: "KDD Cup", url: "http://www.kdd.org/kdd-cup", desc: "The annual Data Mining and Knowledge Discovery competition organized by ACM SIGKDD, providing challenging datasets spanning multiple domains since 1997." },
+    { name: "TunedIT", url: "http://tunedit.org/repo/Data/", desc: "A repository of datasets for data mining and machine learning experiments, organized by domain and task type." },
+    { name: "UCI Machine Learning Repository", url: "https://archive.ics.uci.edu/ml/", desc: "A collection of databases, domain theories, and data generators widely used by the machine learning community for empirical analysis of machine learning algorithms." }
+  ],
+  "EarthScience": [
+    { name: "AQUASTAT - FAO's Information System on Water Resources", url: "http://www.fao.org/nr/water/aquastat/data/query/index.html", desc: "FAO's global information system on water resources and agricultural water management, providing country-level data on water use, irrigation, and dams." },
+    { name: "BODC - British Oceanographic Data Centre", url: "https://www.bodc.ac.uk/data/", desc: "A national facility for managing and distributing oceanographic and marine data from British and international research programs." },
+    { name: "CIESIN Earth Data", url: "http://sedac.ciesin.columbia.edu/data/sets/browse", desc: "Columbia University's Center for International Earth Science Information Network provides socioeconomic and Earth science data for interdisciplinary research." },
+    { name: "EarthData - NASA Earth Observing System Data", url: "https://earthdata.nasa.gov/", desc: "NASA's comprehensive portal for Earth observing system data, providing access to satellite imagery, climate data, and other geospatial datasets." },
+    { name: "EOSDIS - Earth Observing System Data and Information System", url: "https://earthdata.nasa.gov/", desc: "A major component of NASA's Earth Science Data Systems (ESDS) program, providing access to data and products from Earth observing satellites." },
+    { name: "Geoscience Australia Data Portal", url: "http://www.ga.gov.au/scientific-topics/national-location-information/topographic-maps-data", desc: "Australia's national geoscience agency providing topographic, geological, geophysical, and geochemical data for the Australian continent." },
+    { name: "IRIS Seismic Data Portal", url: "http://ds.iris.edu/ds/nodes/dmc/data/", desc: "Incorporated Research Institutions for Seismology provides open access to seismic waveform data, metadata, and derived data products for earthquake research." },
+    { name: "NCAR Research Data Archive", url: "https://rda.ucar.edu/", desc: "National Center for Atmospheric Research's research data archive, containing meteorological and oceanographic observations, operational and reanalysis model outputs, and remote sensing datasets." },
+    { name: "NASA Socioeconomic Data and Applications Center (SEDAC)", url: "http://sedac.ciesin.columbia.edu/", desc: "One of NASA's Distributed Active Archive Centers focusing on human interactions in the environment, hosting global population, infrastructure, and environmental data." },
+    { name: "Open Topography", url: "https://opentopography.org/", desc: "A portal to high-resolution topography data and tools, including LiDAR point clouds and derived DEMs from research projects worldwide." },
+    { name: "USGS Earthquake Data", url: "http://earthquake.usgs.gov/data/", desc: "The USGS National Earthquake Information Center provides real-time and historical earthquake data, hazard maps, and seismic monitoring data." },
+    { name: "USGS Landsat Archive", url: "https://landsat.usgs.gov/", desc: "The longest continuous record of Earth's land surface from space, with Landsat satellite imagery dating back to 1972, providing critical data for land use monitoring." }
+  ],
+  "Economics": [
+    { name: "American Economic Association (AEA) Data", url: "https://www.aeaweb.org/resources/data", desc: "A collection of economic datasets provided by the American Economic Association, including datasets published alongside articles in AEA journals." },
+    { name: "EconData - Economic Data from the University of Maryland", url: "http://inforumweb.umd.edu/econdata/econdata.html", desc: "Economic time series data from the University of Maryland's INFORUM model, including national accounts, industry data, and macroeconomic forecasts." },
+    { name: "FreeLunch.com Economic Data", url: "http://www.economagic.com/", desc: "A comprehensive site of economic time series, providing free access to over 200,000 data series from government and private sources." },
+    { name: "IMF Economic Data", url: "http://www.imf.org/en/Data", desc: "The International Monetary Fund's data portal providing access to global macroeconomic and financial statistics, including World Economic Outlook and International Financial Statistics." },
+    { name: "NBER - National Bureau of Economic Research Data", url: "http://www.nber.org/data/", desc: "Research data from the National Bureau of Economic Research, including macroeconomic, industry, patent, and trade datasets used in prominent economics research." },
+    { name: "The Atlas of Economic Complexity", url: "http://atlas.cid.harvard.edu", desc: "A data visualization tool from Harvard that maps the economic complexity of countries using trade data to predict future economic growth." },
+    { name: "UN Comtrade Database", url: "https://comtrade.un.org/data/", desc: "A repository of official international trade statistics and relevant analytical tables covering import and export data reported by statistical authorities of over 200 countries." },
+    { name: "World Bank Open Data", url: "https://data.worldbank.org/", desc: "Free and open access to the World Bank's collection of global development data, including indicators on poverty, health, education, and economic growth." }
+  ],
+  "Education": [
+    { name: "College ScoreCard Data", url: "https://collegescorecard.ed.gov/data/", desc: "US Department of Education dataset with college-level data including completion rates, costs, graduate earnings, and federal aid for thousands of US higher education institutions." },
+    { name: "NCES - National Center for Education Statistics", url: "http://nces.ed.gov/", desc: "The primary federal entity for collecting and analyzing data related to education in the United States, including the NAEP assessments and IPEDS higher education data." },
+    { name: "Open University Learning Analytics Dataset", url: "https://analyse.kmi.open.ac.uk/open_dataset", desc: "An anonymized dataset of about 32,593 students from The Open University (UK), containing demographic information and their interactions with the Virtual Learning Environment." },
+    { name: "Programme for International Student Assessment (PISA)", url: "http://www.oecd.org/pisa/", desc: "The OECD's Programme for International Student Assessment evaluates education systems worldwide by testing 15-year-olds in math, science, and reading." },
+    { name: "TIMSS - Trends in International Mathematics and Science Study", url: "https://timss.bc.edu/timss2019/international-database/", desc: "International assessments in mathematics and science at grades 4 and 8 conducted every four years, providing comparative data on student achievement across countries." },
+    { name: "UCI's Education Data Sets", url: "https://archive.ics.uci.edu/ml/datasets.php?format=&task=&att=&area=edu&numAtt=&numIns=&type=&sort=nameUp&view=table", desc: "A collection of educational datasets from the UCI Machine Learning Repository, including student performance data, learning management system logs, and educational outcome data." }
+  ],
+  "Energy": [
+    { name: "AMPds - Almanac of Minutely Power dataset", url: "http://ampds.org/", desc: "A residential energy monitoring dataset containing electricity, water, and natural gas consumption data at one-minute intervals for a Canadian home over two years." },
+    { name: "BIG DATA - EIA's Hourly Electric Grid Monitor", url: "https://www.eia.gov/electricity/gridmonitor/dashboard/electric_overview/US48/US48", desc: "The U.S. Energy Information Administration's hourly electric grid monitor providing real-time and historical data on electricity generation, demand, and interchange." },
+    { name: "EIA - Energy Information Administration Data", url: "https://www.eia.gov/electricity/data/eia923/", desc: "U.S. Energy Information Administration data on electricity generation, consumption, and expenditures by fuel type, with Form EIA-923 providing plant-level data." },
+    { name: "Global Power Plant Database", url: "http://datasets.wri.org/dataset/globalpowerplantdatabase", desc: "A comprehensive, open source database of power plants around the world, with data on over 30,000 power plants across 164 countries." },
+    { name: "Household Electricity Usage Data", url: "https://data.london.gov.uk/dataset/smartmeter-energy-use-data-in-london-households", desc: "Smart meter energy use data from 5,567 London households sampled every 30 minutes between November 2011 and February 2014." },
+    { name: "Open Electricity Map", url: "https://www.electricitymap.org/", desc: "A real-time visualization of the CO2 emissions of electricity consumption globally, powered by open-source code and data from national transmission system operators." },
+    { name: "UCI Power consumption dataset", url: "https://archive.ics.uci.edu/ml/datasets/Individual+household+electric+power+consumption", desc: "Measurements of electric power consumption in one household with a one-minute sampling rate over a period of almost 4 years, with nearly 2 million data rows." }
+  ],
+  "Entertainment": [
+    { name: "Amazon Product Data", url: "http://jmcauley.ucsd.edu/data/amazon/", desc: "A large dataset of Amazon product reviews and ratings across 24 product categories, including metadata on products, with reviews dating from 1996 to 2018." },
+    { name: "Entaroadun's Twitter Dataset", url: "https://github.com/entaroadun/gist:1653794", desc: "A collection of Twitter datasets for sentiment analysis and other NLP tasks, compiled from various research sources." },
+    { name: "Filmtrust movie ratings from social networks", url: "https://www.librec.net/datasets.html", desc: "A dataset crawled from the FilmTrust website, containing user ratings and trust network information for social recommendation research." },
+    { name: "GDELT - Global Database of Events, Language, and Tone", url: "http://gdeltproject.org/data.html", desc: "A massive open database of human society, monitoring the world's broadcast, print, and web news media in over 100 languages, with an event database dating back to 1979." },
+    { name: "GroupLens MovieLens Dataset", url: "https://grouplens.org/datasets/movielens/", desc: "Stable benchmark datasets of movie ratings from the MovieLens website, with sizes ranging from 100K to 25M ratings across thousands of movies." },
+    { name: "Yahoo! Music User Ratings Dataset", url: "http://webscope.sandbox.yahoo.com/catalog.php?datatype=r", desc: "A dataset of Yahoo Music! user ratings of songs, albums, artists, and genres, containing over 717 million ratings from 1.8 million users." }
+  ],
+  "Finance": [
+    { name: "Kaggle - Two Sigma Financial Modeling Challenge", url: "https://www.kaggle.com/c/two-sigma-financial-modeling", desc: "A financial modeling challenge dataset from Two Sigma providing anonymized time-series financial data for building predictive models of market behavior." },
+    { name: "CBOE Volatility Index Data", url: "http://www.cboe.com/products/vix-index-volatility/vix-options-and-futures/vix-index/vix-historical-data", desc: "Historical data for the CBOE Volatility Index (VIX), often called the 'fear index', measuring the market's expectation of 30-day volatility in the S&P 500." },
+    { name: "NASDAQ Stock Market Data", url: "https://data.nasdaq.com/", desc: "Quandl/Nasdaq's comprehensive financial, economic, and alternative data marketplace providing market data, fundamental data, and alternative data for investment research." },
+    { name: "OANDA Exchange Rate Data", url: "http://www.oanda.com/currency/historical-rates/", desc: "Historical foreign exchange rates data covering over 200 currencies from 1990, useful for currency research and backtesting trading strategies." },
+    { name: "Quandl Financial Data", url: "https://www.quandl.com/", desc: "A platform for financial, economic, and alternative data serving over 400,000 users with data sourced from over 500 publishers." },
+    { name: "SEC Edgar Data", url: "https://www.sec.gov/cgi-bin/browse-edgar", desc: "The SEC's Electronic Data Gathering, Analysis, and Retrieval system, providing public access to corporate financial filings including annual reports, quarterly reports, and insider trading disclosures." },
+    { name: "Yahoo Finance", url: "http://finance.yahoo.com/", desc: "Financial news, data, and commentary including stock quotes, press releases, financial reports, and original financial content for stocks, bonds, and commodities." }
+  ],
+  "GIS": [
+    { name: "ArcGIS Open Data Platform", url: "http://opendata.arcgis.com/", desc: "Esri's platform hosting thousands of open geospatial datasets from governments, NGOs, and research institutions around the world." },
+    { name: "City of Chicago Data Portal", url: "https://data.cityofchicago.org/", desc: "Chicago's open data portal containing hundreds of datasets on crime, transportation, public health, building permits, and city services." },
+    { name: "Cambridge, MA Open Data", url: "https://www.cambridgema.gov/departments/opendata", desc: "Open data from the city of Cambridge, Massachusetts, including GIS data, demographics, transportation, and city service datasets." },
+    { name: "European Environment Agency GIS Data", url: "https://www.eea.europa.eu/data-and-maps", desc: "Geospatial data from the European Environment Agency covering land cover, emissions, biodiversity, noise, and other environmental themes across Europe." },
+    { name: "GeoHack - Wikipedia Coordinates Database", url: "https://tools.wmflabs.org/geohack/", desc: "A database of geographic coordinates extracted from Wikipedia articles, linking points of interest to geospatial information." },
+    { name: "Natural Earth Data", url: "http://www.naturalearthdata.com/", desc: "A public domain map dataset available at 1:10m, 1:50m, and 1:110m scales, featuring political, physical, and raster map data for cartography and GIS." },
+    { name: "OpenStreetMap Data Extracts", url: "https://download.geofabrik.de/", desc: "Free downloads of OpenStreetMap data extracts by geographic region in multiple formats (PBF, OSM), updated daily by Geofabrik." },
+    { name: "Ordnance Survey Open Data (UK)", url: "https://www.ordnancesurvey.co.uk/business-government/tools-support/open-data-support", desc: "The UK's national mapping agency's open datasets including topographic data, Code-Point Open, boundary data, and satellite imagery for Great Britain." },
+    { name: "TIGER/Line Shapefiles (US Census)", url: "https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html", desc: "The Census Bureau's geographic database containing boundaries for US states, counties, tracts, roads, and other geographic features, updated annually." },
+    { name: "UN Global GIS Data", url: "https://www.un.org/geospatial/", desc: "Geographic information from the United Nations including country boundaries, disputed territories, and international administrative boundaries." }
+  ],
+  "Government": [
+    { name: "Australia Government Open Data", url: "https://data.gov.au/", desc: "Australia's government open data portal providing access to thousands of datasets from federal, state, and territory governments across diverse domains." },
+    { name: "Canada Open Data", url: "http://open.canada.ca/en", desc: "The Government of Canada's open data portal, providing access to federal government datasets on health, science, environment, economy, and more." },
+    { name: "European Union Open Data Portal", url: "http://data.europa.eu/euodp/en/data/", desc: "The official portal providing access to open data from EU institutions, including datasets from the European Commission, Parliament, and other EU agencies." },
+    { name: "Humanitarian Data Exchange (HDX)", url: "https://data.humdata.org/", desc: "OCHA's platform for sharing humanitarian data, including crisis data, population statistics, and geographic boundaries for humanitarian operations." },
+    { name: "India Open Government Data Platform", url: "https://data.gov.in/", desc: "India's open government data platform providing access to data from central government ministries and departments across agriculture, environment, finance, and more." },
+    { name: "New Zealand Government Data", url: "https://www.data.govt.nz/", desc: "New Zealand's open government data portal with datasets from government agencies covering health, environment, business, education, and society." },
+    { name: "Open Data DC (Washington DC)", url: "http://opendata.dc.gov/", desc: "Washington DC's open data catalog with GIS datasets, demographic data, public safety information, and government service data for the nation's capital." },
+    { name: "Socrata Open Data Network", url: "https://opendata.socrata.com/", desc: "A large-scale public data portal hosting thousands of government datasets from federal, state, and local agencies across the United States." },
+    { name: "UK Data Service", url: "https://www.ukdataservice.ac.uk/", desc: "The UK's largest collection of social, economic, and population data, providing access to hundreds of major studies and government surveys for research." },
+    { name: "US Census Data", url: "http://www.census.gov/data.html", desc: "The US Census Bureau's data portal providing access to population, economic, geographic, and housing data from the decennial census, American Community Survey, and other surveys." },
+    { name: "US Open Government Data (data.gov)", url: "https://www.data.gov/", desc: "The US government's open data portal with over 200,000 datasets from federal agencies covering agriculture, climate, consumer, ecosystems, education, energy, finance, health, and more." }
+  ],
+  "Healthcare": [
+    { name: "CMS Medicare Data", url: "https://data.cms.gov/", desc: "The Centers for Medicare & Medicaid Services data portal providing access to data on Medicare claims, hospital quality measures, nursing home quality, and more." },
+    { name: "EU Mortality Database", url: "http://data.euro.who.int/hfamdb/", desc: "The World Health Organization's European mortality database providing cause-of-death data for WHO European Region member states from 1980 onward." },
+    { name: "HCUP - Healthcare Cost and Utilization Project", url: "https://www.ahrq.gov/data/hcup/", desc: "The largest collection of longitudinal hospital care data in the United States, covering inpatient stays, emergency department visits, and ambulatory surgery encounters." },
+    { name: "Human Mortality Database", url: "http://www.mortality.org/", desc: "Provides detailed mortality and population data for 41 countries, enabling research on longevity, population aging, and demographic trends." },
+    { name: "Medical Information Mart for Intensive Care (MIMIC-III)", url: "https://mimic.physionet.org/", desc: "A large, freely-available database comprising deidentified health-related data associated with over 40,000 patients who stayed in critical care units." },
+    { name: "MedlinePlus Health Data", url: "https://medlineplus.gov/", desc: "The US National Library of Medicine's trusted health information resource, including drug information, medical encyclopedia, and clinical trial data." },
+    { name: "NIH National Survey on Drug Use and Health", url: "https://www.icpsr.umich.edu/icpsrweb/ICPSR/series/64", desc: "Annual survey data on alcohol, tobacco, drug use, and mental health issues among Americans age 12 and older, conducted by SAMHSA." },
+    { name: "PhysioNet Clinical Data Repository", url: "https://physionet.org/", desc: "A repository of freely-available medical research data, including waveform signals, vital signs, and clinical notes from ICU patients and other clinical settings." },
+    { name: "WHO Global Health Observatory (GHO)", url: "http://www.who.int/gho/en/", desc: "The World Health Organization's gateway to health-related statistics for its 194 member states, covering disease burden, risk factors, health systems, and health-related SDGs." }
+  ],
+  "ImageProcessing": [
+    { name: "2000 Faces Dataset", url: "http://www.scface.org/", desc: "A database of facial images taken in uncontrolled conditions (SCface), simulating face recognition in surveillance scenarios using cameras of different quality." },
+    { name: "Caltech Image Datasets", url: "http://www.vision.caltech.edu/archive.html", desc: "A collection of datasets from the Caltech Vision Group, including the Caltech-101 and Caltech-256 object recognition datasets widely used in computer vision." },
+    { name: "Comprehensive Cars Dataset (CompCars)", url: "http://mmlab.ie.cuhk.edu.hk/datasets/comp_cars/index.html", desc: "A dataset of cars from two scenarios: web-nature and surveillance-nature, containing 136,726 car images covering 163 car makes with 1,716 car models." },
+    { name: "CIFAR-10 and CIFAR-100", url: "https://www.cs.toronto.edu/~kriz/cifar.html", desc: "Standard benchmark datasets for image classification containing 60,000 32x32 colour images in 10 or 100 classes, widely used for evaluating deep learning models." },
+    { name: "ImageNet Large Scale Visual Recognition Challenge", url: "http://www.image-net.org/", desc: "A large visual database designed for visual object recognition research, with over 14 million images organized according to the WordNet hierarchy." },
+    { name: "Indoor Scene Recognition Dataset", url: "http://web.mit.edu/torralba/www/indoor.html", desc: "A dataset from MIT for indoor scene recognition containing 15,620 images across 67 indoor categories, representing a challenging multi-class classification problem." },
+    { name: "Labeled Faces in the Wild (LFW)", url: "http://vis-www.cs.umass.edu/lfw/", desc: "A database of face photographs designed for studying unconstrained face recognition, containing more than 13,000 images of faces from the web with over 5,000 subjects." },
+    { name: "Open Images Dataset (Google)", url: "https://ai.google.com/research/ConceptualCaptions", desc: "A dataset of ~9 million images annotated with labels, bounding boxes, and visual relationships, developed by Google for advancing computer vision research." },
+    { name: "Stanford Dogs Dataset", url: "http://vision.stanford.edu/aditya86/ImageNetDogs/", desc: "Contains 20,580 images of 120 breeds of dogs from around the world, built using images and annotations from ImageNet for fine-grained image categorization." },
+    { name: "YouTube-8M Dataset", url: "https://research.google.com/youtube8m/", desc: "A large-scale labeled video dataset with millions of YouTube video IDs annotated with over 3,000 visual entities, designed for large-scale video understanding research." }
+  ],
+  "MachineLearning": [
+    { name: "Yelp Reviews", url: "https://www.yelp.com/dataset", desc: "Yelp's dataset challenge provides business, review, and user data for personal, educational, and academic purposes, containing millions of reviews across cities in the US and Canada." },
+    { name: "IMDb Movie Reviews (Stanford)", url: "https://ai.stanford.edu/~amaas/data/sentiment/", desc: "A large movie review dataset for binary sentiment classification, containing 25,000 highly polar movie reviews for training and 25,000 for testing." },
+    { name: "MNIST Handwritten Digits", url: "http://yann.lecun.com/exdb/mnist/", desc: "The classic benchmark dataset for machine learning, containing 70,000 handwritten digit images (0-9) in 28x28 pixel format, widely used for testing classification algorithms." },
+    { name: "UCI Machine Learning Repository", url: "https://archive.ics.uci.edu/ml/", desc: "A collection of 500+ databases widely used by the machine learning community for empirical analysis, covering classification, regression, clustering, and other task types." },
+    { name: "MS COCO - Common Objects in Context", url: "http://cocodataset.org/", desc: "A large-scale object detection, segmentation, and captioning dataset with 330K images, 1.5 million object instances, and 80 object categories." },
+    { name: "Open Data for Deep Learning (fast.ai)", url: "https://course.fast.ai/datasets", desc: "Curated datasets for deep learning education and research from fast.ai, including image classification, NLP, tabular data, and recommendation system datasets." },
+    { name: "Awesome Machine Learning Datasets", url: "https://github.com/awesomedata/awesome-public-datasets", desc: "A topic-centric list of high-quality open datasets for machine learning research, organized by domain and continuously updated by the community." },
+    { name: "Kaggle Datasets", url: "https://www.kaggle.com/datasets", desc: "Thousands of public datasets contributed by the data science community on Kaggle, covering virtually every topic from sports to genomics to satellite imagery." }
+  ],
+  "Museums": [
+    { name: "Canada Science and Technology Museum Data", url: "https://ingeniumcanada.org/collection-research/open-data-artifact-open-data", desc: "Open data from Ingenium (Canada's museums of science and innovation), providing artifact records from three national museums including industrial and transportation collections." },
+    { name: "Cooper Hewitt Collection Data", url: "https://github.com/cooperhewitt/collection", desc: "The complete collection data from the Cooper Hewitt, Smithsonian Design Museum, with over 200,000 objects including design objects, drawings, and textiles." },
+    { name: "The Metropolitan Museum of Art Collection API", url: "https://metmuseum.github.io/", desc: "The Met's API provides access to 400,000+ publicly domain artworks from 5,000 years of history, including images and detailed metadata for each work." },
+    { name: "Natural History Museum Data Portal", url: "http://data.nhm.ac.uk/", desc: "The Natural History Museum London's data portal providing open access to nearly 3 million specimen records from its natural history collections." },
+    { name: "Rijksmuseum API", url: "https://data.rijksmuseum.nl/object-metadata/api/", desc: "API access to the Rijksmuseum's 800,000+ art objects and their metadata, including high-resolution images of the Dutch Golden Age masterpieces." },
+    { name: "Smithsonian Open Access", url: "https://www.si.edu/openaccess", desc: "The Smithsonian Institution's open access initiative providing free, no-copyright-restrictions access to 4.4 million 2D and 3D digital media and related data." },
+    { name: "Tate Art Museum Collection Data", url: "https://github.com/tategallery/collection", desc: "Historical metadata for around 70,000 artworks from the Tate collection, and about 3,500 associated artists, available under Creative Commons CC0 license." }
+  ],
+  "NaturalLanguage": [
+    { name: "AWS Open Data NLP Datasets", url: "https://registry.opendata.aws/", desc: "Amazon Web Services' open data registry includes numerous NLP datasets for training language models, sentiment analysis, named entity recognition, and machine translation." },
+    { name: "Blog Authorship Corpus", url: "http://u.cs.biu.ac.il/~koppel/BlogCorpus.htm", desc: "A corpus of 681,288 posts from 19,320 bloggers with demographic information including age, gender, and industry, useful for authorship attribution and demographic inference research." },
+    { name: "Common Crawl Corpus", url: "http://commoncrawl.org/the-data/", desc: "A corpus of web crawl data containing petabytes of raw web page data, metadata extracts, and text extracts, widely used for training large language models." },
+    { name: "DBpedia", url: "http://wiki.dbpedia.org/Datasets", desc: "A crowd-sourced community effort to extract structured content from Wikipedia, providing a large multi-domain knowledge graph with millions of entities and facts." },
+    { name: "Enron Email Dataset", url: "https://www.cs.cmu.edu/~enron/", desc: "A large email dataset containing approximately 500,000 emails from 150 senior Enron employees, widely used for NLP research in email analysis and social network analysis." },
+    { name: "Freebase Data Dumps", url: "https://developers.google.com/freebase/", desc: "Freebase was a large collaborative knowledge base containing structured data about people, places, and things, now mirrored and available for research as part of Wikidata." },
+    { name: "GloVe Word Vectors", url: "https://nlp.stanford.edu/projects/glove/", desc: "Pre-trained Global Vectors for word representation from Stanford NLP, trained on Common Crawl, Twitter, and Wikipedia data at various dimensionalities." },
+    { name: "Google Books Ngrams", url: "https://aws.amazon.com/datasets/google-books-ngrams/", desc: "A dataset of n-grams extracted from books digitized by Google, containing the frequency of all n-grams (1-5 word sequences) from over 8 million books spanning five centuries." },
+    { name: "HotpotQA Multi-hop QA Dataset", url: "https://hotpotqa.github.io/", desc: "A question answering dataset with 113K Wikipedia-based question-answer pairs that require reasoning over multiple documents to answer correctly." },
+    { name: "Project Gutenberg Text Data", url: "https://www.gutenberg.org/", desc: "Over 60,000 free ebooks in plain text and other formats, representing a rich corpus of classic literature for NLP research, text mining, and language modeling." },
+    { name: "Stanford Question Answering Dataset (SQuAD)", url: "https://rajpurkar.github.io/SQuAD-explorer/", desc: "A reading comprehension dataset consisting of 100,000+ questions posed by crowdworkers on a set of Wikipedia articles, widely used for NLP benchmarking." },
+    { name: "Twitter Sentiment Analysis Dataset", url: "http://thinknook.com/twitter-sentiment-analysis-training-corpus-dataset-2012-09-22/", desc: "A dataset of 1.6 million tweets annotated with positive and negative sentiment labels for training sentiment analysis models." },
+    { name: "Wikipedia Corpus", url: "https://dumps.wikimedia.org/", desc: "Full dumps of all Wikimedia projects including Wikipedia, Wikidata, Wikisource, and Commons, available for download and used extensively in NLP and knowledge graph research." },
+    { name: "WordNet", url: "https://wordnet.princeton.edu/", desc: "A large lexical database of English where nouns, verbs, adjectives, and adverbs are grouped into sets of cognitive synonyms (synsets), used extensively in NLP research." }
+  ],
+  "Neuroscience": [
+    { name: "Allen Brain Atlas", url: "http://www.brain-map.org/", desc: "A rich, quantitative 3D informatics platform for mapping gene expression and connectivity patterns in the mouse, developing human, and adult human brain." },
+    { name: "Brain Imaging Data Structure (BIDS) Datasets", url: "https://bids-standard.github.io/bids-examples/", desc: "A growing collection of neuroimaging datasets organized according to the BIDS standard, facilitating data sharing and analysis reproducibility." },
+    { name: "CRCNS - Collaborative Research in Computational Neuroscience", url: "http://crcns.org/", desc: "A repository of neuroscience datasets for computational research, including electrophysiology recordings, calcium imaging data, and behavioral data from various species." },
+    { name: "Human Connectome Project", url: "http://www.humanconnectomeproject.org/", desc: "An unprecedented opportunity to map the neural pathways that underlie human brain function, providing high-quality neuroimaging data from 1,200 healthy adults." },
+    { name: "NIMH Data Archive", url: "https://data-archive.nimh.nih.gov/", desc: "The National Institute of Mental Health's data repository containing data from studies funded by NIMH, including neuroimaging, genomics, and behavioral data." },
+    { name: "OpenNeuro", url: "https://openneuro.org/", desc: "A free and open platform for validating and sharing BIDS-compliant neuroimaging data, hosting thousands of MRI, MEG, EEG, and iEEG datasets." }
+  ],
+  "Physics": [
+    { name: "CERN Open Data Portal", url: "http://opendata.cern.ch/", desc: "Open data from CERN's particle physics experiments, including data from the Large Hadron Collider (LHC) experiments ATLAS, CMS, ALICE, and LHCb." },
+    { name: "IceCube Neutrino Data", url: "https://icecube.wisc.edu/data-releases", desc: "Data releases from the IceCube Neutrino Observatory at the South Pole, including high-energy neutrino event data for astroparticle physics research." },
+    { name: "LIGO Gravitational Wave Data", url: "https://www.gw-openscience.org/", desc: "Gravitational wave data from LIGO and Virgo detectors, including the datasets used to detect the first gravitational wave signals from binary black hole and neutron star mergers." },
+    { name: "NASA Exoplanet Archive", url: "https://exoplanetarchive.ipac.caltech.edu/", desc: "An online astronomical exoplanet and stellar catalog and data service that provides access to data supporting the search for and characterization of extra-solar planets." },
+    { name: "Sloan Digital Sky Survey (SDSS)", url: "http://www.sdss.org/", desc: "A major multi-spectral imaging and spectroscopic redshift survey using a dedicated 2.5m telescope, providing detailed three-dimensional maps of the universe." }
+  ],
+  "Psychology+Cognition": [
+    { name: "OSF Psychology Datasets", url: "https://osf.io/", desc: "The Open Science Framework hosts thousands of psychology datasets across cognitive psychology, social psychology, clinical psychology, and developmental psychology." },
+    { name: "Open Psychometrics Data", url: "http://openpsychometrics.org/_rawdata/", desc: "Raw data from online personality tests, including the Big Five personality inventory, Myers-Briggs type assessments, and other psychometric scales." },
+    { name: "Repository of Personality Test Data", url: "http://personality-project.org/r/html/read.file.html", desc: "A repository of personality test data from multiple studies, providing data for psychometric research and personality science." },
+    { name: "Stressful Events Survey Data", url: "https://openpsychometrics.org/_rawdata/", desc: "Survey data on stress, anxiety, depression and major life events from large online samples, useful for psychological research and mental health analysis." },
+    { name: "UK Biobank Mental Health Data", url: "https://www.ukbiobank.ac.uk/", desc: "A large-scale biomedical database and research resource, containing in-depth genetic and health information from half a million UK participants including mental health assessments." }
+  ],
+  "PublicDomains": [
+    { name: "Freebase (Knowledge Graph)", url: "https://developers.google.com/freebase/", desc: "A large collaborative knowledge base containing structured data about millions of topics including people, places, films, books, and more." },
+    { name: "Open Library Data", url: "https://openlibrary.org/developers/dumps", desc: "Data dumps from Open Library, an open, editable library catalog of every book ever published, with over 20 million book records." },
+    { name: "Project Gutenberg", url: "http://www.gutenberg.org/", desc: "A library of over 60,000 free ebooks, focusing on older works for which copyright has expired, making them free for digital use." },
+    { name: "The Internet Archive", url: "https://archive.org/", desc: "A non-profit library of millions of free books, movies, software, music, websites, and more, including the Wayback Machine with over 700 billion web pages." },
+    { name: "Wikidata", url: "https://www.wikidata.org/", desc: "A free and open knowledge base that can be read and edited by both humans and machines, serving as central storage for structured data of Wikimedia projects." }
+  ],
+  "SearchEngines": [
+    { name: "Bing Coronavirus Query Set", url: "https://github.com/microsoft/BingCoronavirusQuerySet", desc: "Anonymized Bing search queries related to COVID-19 from users across the world from January 2020 to June 2020, for research on pandemic information seeking behavior." },
+    { name: "Criteo Click Prediction Dataset", url: "http://criteolabs.wpengine.com/datasets/2014-kaggle-display-advertising-challenge-dataset/", desc: "A benchmark dataset for click-through rate estimation, containing 45 million records with numerical and categorical features from Criteo's ad serving system." },
+    { name: "Microsoft Research Open Data", url: "https://msropendata.com/", desc: "Microsoft Research's repository of datasets supporting published research, including NLP, computer vision, and information retrieval datasets." },
+    { name: "AOL Search Query Logs", url: "http://www.researchpipeline.com/mediawiki/index.php?title=AOL_Search_Query_Logs", desc: "A collection of 20 million web queries collected from 650,000 AOL users over three months, one of the first large-scale query log datasets released for research." },
+    { name: "Yahoo Webscope Data Repository", url: "http://research.yahoo.com/Academic_Relations/webscope", desc: "Yahoo's academic data sharing program providing access to web data for non-commercial scientific research, including user behavior, ratings, and content data." }
+  ],
+  "SocialNetworks": [
+    { name: "72 Hours Twitter Dataset", url: "https://snap.stanford.edu/data/twitter-2010.html", desc: "A large crawl of the Twitter social network, containing 476 million tweets from 17 million users collected over a 7-month period." },
+    { name: "Enron Email Network", url: "https://snap.stanford.edu/data/email-Enron.html", desc: "The email communication network of Enron Corporation with nodes representing email addresses and edges representing email exchanges between pairs of addresses." },
+    { name: "Facebook Large Page-Page Network", url: "https://snap.stanford.edu/data/facebook-large-page-page-network.html", desc: "A dataset of Facebook page networks where nodes represent public pages and edges represent mutual likes between pages, for community detection research." },
+    { name: "GitHub Archive", url: "https://www.gharchive.org/", desc: "A project to record the public GitHub timeline, archive it, and make it easily accessible for further analysis of open source development activity." },
+    { name: "Reddit Comments Dataset", url: "https://files.pushshift.io/reddit/", desc: "A complete archive of Reddit comments and submissions, maintained by Pushshift, spanning from Reddit's founding to the present day." },
+    { name: "Social Networks with User Profiles (Friendster)", url: "https://snap.stanford.edu/data/com-Friendster.html", desc: "The Friendster social network with 65 million nodes and 1.8 billion edges, one of the largest publicly available social network datasets." },
+    { name: "Stack Exchange Data Dump", url: "https://archive.org/details/stackexchange", desc: "An anonymized dump of all user-contributed content on the Stack Exchange network, including Stack Overflow, Super User, and 170+ other communities." },
+    { name: "Twitter7 - Random Tweets Dataset", url: "http://snap.stanford.edu/data/twitter7.html", desc: "A dataset of 476 million tweets from 20 million users covering various topics, collected through the Twitter API for social network analysis." }
+  ],
+  "SocialSciences": [
+    { name: "ANES - American National Election Studies", url: "http://www.electionstudies.org/", desc: "Times series data from surveys conducted before and after presidential elections since 1948, studying political attitudes, voting behavior, and public opinion in the United States." },
+    { name: "Correlates of War Project", url: "http://www.correlatesofwar.org/", desc: "A project gathering scientific data on the occurrence and nature of war, with datasets on militarized interstate disputes, alliances, international trade, and national capabilities." },
+    { name: "General Social Survey (GSS)", url: "http://gss.norc.org/", desc: "A nationally representative survey of American adults conducted since 1972, tracking changes in social characteristics, attitudes, and behaviors on topics from politics to religion." },
+    { name: "Integrated Public Use Microdata Series (IPUMS)", url: "https://www.ipums.org/", desc: "The world's largest individual-level population database, providing census and survey data from around the world integrated across time and place for social science research." },
+    { name: "OECD Statistics", url: "https://stats.oecd.org/", desc: "OECD's online statistical database providing data on economics, development, education, employment, health, and society across member and partner countries." },
+    { name: "Pew Research Center Datasets", url: "https://www.pewresearch.org/download-datasets/", desc: "Survey datasets from Pew Research Center studies on American politics, social trends, religion, internet usage, and global attitudes." }
+  ],
+  "Software": [
+    { name: "FLOSSmole Open Source Software Data", url: "https://flossmole.org/", desc: "Data collected from open source software repositories, forges, and communities for studying free/libre/open source software development." },
+    { name: "GitHub Archive", url: "https://www.gharchive.org/", desc: "A project to record the public GitHub timeline, archive it, and make it easily accessible for analyzing open source software development trends." },
+    { name: "Linux Kernel Data", url: "https://www.openhub.net/p/linux", desc: "Comprehensive data on Linux kernel development, including code metrics, contributor activity, and source code evolution over 30+ years." },
+    { name: "Stack Overflow Annual Developer Survey", url: "https://insights.stackoverflow.com/survey", desc: "Annual survey of developers covering programming languages, frameworks, tools, employment, and developer demographics and practices." },
+    { name: "Software Heritage Archive", url: "https://www.softwareheritage.org/archive/", desc: "The largest archive of software source code, preserving the entire public source code for hundreds of millions of software projects across multiple forges." }
+  ],
+  "Sports": [
+    { name: "Baseball Reference Data", url: "https://www.baseball-reference.com/", desc: "Comprehensive historical baseball statistics covering Major League Baseball from 1871 to the present, including player, team, and game-level data." },
+    { name: "Cricsheet Cricket Data", url: "https://cricsheet.org/", desc: "Ball-by-ball cricket data in YAML and JSON format for matches from major international and domestic competitions, including Tests, ODIs, T20Is, and IPL." },
+    { name: "FiveThirtyEight Sports Data", url: "https://github.com/fivethirtyeight/data", desc: "Data and code behind FiveThirtyEight's sports stories and predictions, including NFL Elo ratings, NBA player ratings, soccer predictions, and more." },
+    { name: "Football (Soccer) Data from football-data.co.uk", url: "http://www.football-data.co.uk/data.php", desc: "Historical football results and betting odds for major European football leagues, covering over 20 years of match data." },
+    { name: "NBA Stats API", url: "https://stats.nba.com/", desc: "The official NBA statistics database providing player, team, and game statistics across all NBA seasons, including advanced metrics and play-by-play data." },
+    { name: "Lahman Baseball Database", url: "http://www.seanlahman.com/baseball-archive/statistics/", desc: "A comprehensive historical baseball statistics database from 1871 to the present, including batting, pitching, fielding, salaries, and team data in multiple formats." },
+    { name: "StatsBomb Open Data", url: "https://github.com/statsbomb/open-data", desc: "Free football (soccer) event data from StatsBomb, including detailed match event data for competitions like the Women's World Cup, UEFA Euro, and FA Women's Super League." }
+  ],
+  "TimeSeries": [
+    { name: "Datamarket Time Series Data", url: "https://datamarket.com/data/list/?q=topic:population", desc: "A marketplace for data providing access to a wide range of time series datasets spanning economics, population, energy, and other domains." },
+    { name: "M Competitions Forecasting Datasets", url: "https://forecasting.svetunkov.ru/en/2020/02/04/m4-competition/", desc: "Benchmark forecasting datasets from the M-competitions (M1 through M4), the premier competitions in the time series forecasting community with up to 100,000 series." },
+    { name: "NIST / SEMATECH e-Handbook of Statistical Methods", url: "https://www.itl.nist.gov/div898/handbook/", desc: "Statistical methods and datasets for engineering and science, including time series analysis examples and benchmark datasets." },
+    { name: "Time Series Classification Repository", url: "http://www.timeseriesclassification.com/", desc: "A repository of over 100 time series datasets for classification tasks, along with baseline algorithm results for benchmarking." },
+    { name: "UCR Time Series Classification Archive", url: "https://www.cs.ucr.edu/~eamonn/time_series_data_2018/", desc: "The most comprehensive collection of labeled time series datasets for benchmarking time series classification algorithms, with 128+ datasets across diverse domains." }
+  ],
+  "Transportation": [
+    { name: "Airlines OTP (On-Time Performance)", url: "http://stat-computing.org/dataexpo/2009/the-data.html", desc: "US airline on-time performance data from the Bureau of Transportation Statistics, with records of every domestic flight including departure/arrival times, delays, and cancellations." },
+    { name: "Citibike NYC Trip Data", url: "https://www.citibikenyc.com/system-data", desc: "Complete trip histories from New York City's Citi Bike bicycle sharing system, including trip duration, start/end station locations, user type, and anonymized demographic data." },
+    { name: "GeoLife GPS Trajectories", url: "https://www.microsoft.com/en-us/download/details.aspx?id=52367", desc: "A GPS trajectory dataset collected by 182 users over 5 years (April 2007 to August 2012), representing 17,621 trajectories with a total distance of 1.2 million km." },
+    { name: "NYC Taxi Trip Data", url: "https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page", desc: "Trip record data from NYC's Taxi and Limousine Commission covering yellow cab, green cab, and for-hire vehicle trips with pickup/dropoff times, locations, fares, and tip amounts." },
+    { name: "OpenFlights Airport Data", url: "https://openflights.org/data.html", desc: "Open data on airports, airlines, and routes from OpenFlights, containing over 10,000 airports, 5,000 airlines, and 67,000 routes worldwide." },
+    { name: "Uber Movement Data", url: "https://movement.uber.com/explore/", desc: "Anonymized data from over 2 billion Uber trips, providing insights into how people move around cities including travel times between areas at different times of day." }
+  ]
+};
+
+// ── CATEGORY ICONS & COLORS ──
+const CAT_META = {
+  "Agriculture":        { icon: "🌾", bg: "#fff8e1", color: "#f59e0b" },
+  "Architecture":       { icon: "🏛️", bg: "#fce7f3", color: "#ec4899" },
+  "Biology":            { icon: "🧬", bg: "#d1fae5", color: "#10b981" },
+  "Chemistry":          { icon: "⚗️", bg: "#ede9fe", color: "#8b5cf6" },
+  "Climate+Weather":    { icon: "🌤️", bg: "#dbeafe", color: "#3b82f6" },
+  "ComplexNetworks":    { icon: "🕸️", bg: "#f3f4f6", color: "#6b7280" },
+  "ComputerNetworks":   { icon: "🖧",  bg: "#e0f2fe", color: "#0ea5e9" },
+  "CyberSecurity":      { icon: "🔐", bg: "#fee2e2", color: "#ef4444" },
+  "DataChallenges":     { icon: "🏆", bg: "#fef3c7", color: "#f59e0b" },
+  "EarthScience":       { icon: "🌍", bg: "#d1fae5", color: "#059669" },
+  "Economics":          { icon: "📈", bg: "#ecfdf5", color: "#10b981" },
+  "Education":          { icon: "🎓", bg: "#eff6ff", color: "#3b82f6" },
+  "Energy":             { icon: "⚡", bg: "#fefce8", color: "#eab308" },
+  "Entertainment":      { icon: "🎬", bg: "#fdf2f8", color: "#d946ef" },
+  "Finance":            { icon: "💰", bg: "#f0fdf4", color: "#16a34a" },
+  "GIS":                { icon: "🗺️", bg: "#f0f9ff", color: "#0284c7" },
+  "Government":         { icon: "🏛",  bg: "#f5f3ff", color: "#7c3aed" },
+  "Healthcare":         { icon: "🏥", bg: "#fff1f2", color: "#f43f5e" },
+  "ImageProcessing":    { icon: "🖼️", bg: "#fdf4ff", color: "#c026d3" },
+  "MachineLearning":    { icon: "🤖", bg: "#eef0ff", color: "#4361ee" },
+  "Museums":            { icon: "🏺", bg: "#fff7ed", color: "#ea580c" },
+  "NaturalLanguage":    { icon: "💬", bg: "#f0f9ff", color: "#0369a1" },
+  "Neuroscience":       { icon: "🧠", bg: "#fdf2f8", color: "#9d174d" },
+  "Physics":            { icon: "⚛️", bg: "#f0fdf4", color: "#15803d" },
+  "Psychology+Cognition":{ icon: "🧘", bg: "#fef9c3", color: "#a16207" },
+  "PublicDomains":      { icon: "📚", bg: "#f8fafc", color: "#475569" },
+  "SearchEngines":      { icon: "🔍", bg: "#eff6ff", color: "#2563eb" },
+  "SocialNetworks":     { icon: "👥", bg: "#fff7ed", color: "#c2410c" },
+  "SocialSciences":     { icon: "🏘️", bg: "#f5f3ff", color: "#6d28d9" },
+  "Software":           { icon: "💻", bg: "#f0f9ff", color: "#075985" },
+  "Sports":             { icon: "⚽", bg: "#ecfdf5", color: "#047857" },
+  "TimeSeries":         { icon: "📉", bg: "#fef3c7", color: "#b45309" },
+  "Transportation":     { icon: "🚌", bg: "#eff6ff", color: "#1d4ed8" },
+};
+function getCatMeta(cat) {
+  return CAT_META[cat] || { icon: "📦", bg: "#f3f4f6", color: "#6b7280" };
+}
+
+// ── STATE ──
+let currentCategory = "all";
+let searchTerm = "";
+
+// ── SIDEBAR ──
+function renderSidebar(filter = "") {
+  const list = document.getElementById("category-list");
+  const totalCount = Object.values(DATASETS).reduce((a, b) => a + b.length, 0);
+  list.innerHTML = "";
+  list.appendChild(makeCatItem("all", "All", totalCount));
+  Object.entries(DATASETS).forEach(([cat, items]) => {
+    if (!filter || cat.toLowerCase().includes(filter.toLowerCase())) {
+      list.appendChild(makeCatItem(cat, cat, items.length));
+    }
+  });
+}
+
+function makeCatItem(id, label, count) {
+  const d = document.createElement("div");
+  d.className = "cat-item" + (currentCategory === id ? " active" : "");
+  d.innerHTML = `<span>${label}</span><span class="cat-count">${count}</span>`;
+  d.onclick = () => {
+    currentCategory = id;
+    searchTerm = "";
+    document.getElementById("dataset-search").value = "";
+    renderSidebar(document.getElementById("category-search").value);
+    renderDatasets();
+  };
+  return d;
+}
+
+// ── DATASETS ──
+function renderDatasets() {
+  const grid    = document.getElementById("dataset-grid");
+  const empty   = document.getElementById("empty-state");
+  const heading = document.getElementById("heading-text");
+  const counter = document.getElementById("result-count");
+  grid.innerHTML = "";
+  empty.style.display = "none";
+
+  if (currentCategory === "all") {
+    if (searchTerm) {
+      // grouped search results
+      const groups = {};
+      Object.entries(DATASETS).forEach(([cat, items]) => {
+        const hits = items.filter(d => matches(d, cat, searchTerm));
+        if (hits.length) groups[cat] = hits;
+      });
+      const total = Object.values(groups).reduce((a,b)=>a+b.length,0);
+      heading.textContent = "Search Results";
+      counter.textContent = total ? `${total} result${total!==1?"s":""}` : "";
+      if (!total) { empty.style.display = "block"; return; }
+      Object.entries(groups).forEach(([cat, items]) => appendSection(grid, cat, items));
+    } else {
+      const total = Object.values(DATASETS).reduce((a,b)=>a+b.length,0);
+      heading.textContent = "All Datasets";
+      counter.textContent = `${total} datasets`;
+      Object.entries(DATASETS).forEach(([cat, items]) => appendSection(grid, cat, items));
+    }
+  } else {
+    const items    = DATASETS[currentCategory] || [];
+    const filtered = searchTerm ? items.filter(d => matches(d, currentCategory, searchTerm)) : items;
+    heading.textContent = currentCategory;
+    counter.textContent = `${filtered.length} dataset${filtered.length!==1?"s":""}`;
+    if (!filtered.length) { empty.style.display = "block"; return; }
+    const g = makeGrid();
+    filtered.forEach(d => g.appendChild(makeCard(d, currentCategory)));
+    grid.appendChild(g);
+  }
+}
+
+function appendSection(container, cat, items) {
+  const hdr = document.createElement("div");
+  hdr.className = "section-header";
+  const m = getCatMeta(cat);
+  hdr.innerHTML = `<span style="font-size:17px">${m.icon}</span>${cat}<span class="s-count">${items.length}</span>`;
+  container.appendChild(hdr);
+  const g = makeGrid();
+  items.forEach(d => g.appendChild(makeCard(d, cat)));
+  container.appendChild(g);
+}
+
+function makeGrid() {
+  const g = document.createElement("div");
+  g.className = "cards-grid";
+  return g;
+}
+
+function makeCard(dataset, category) {
+  const m = getCatMeta(category);
+  const card = document.createElement("div");
+  card.className = "dataset-card";
+  card.innerHTML = `
+    <div class="card-icon-row">
+      <div class="card-icon" style="background:${m.bg}">${m.icon}</div>
+      <div class="card-title">${hl(dataset.name)}</div>
+    </div>
+    <div class="card-desc">${hl(dataset.desc)}</div>
+    <div class="card-footer-row">
+      <span class="card-cat-tag">${category}</span>
+      <span class="card-arrow">View →</span>
+    </div>
+  `;
+  card.onclick = () => openModal(dataset, category);
+  return card;
+}
+
+function hl(text) {
+  if (!searchTerm) return text;
+  const re = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")})`, "gi");
+  return text.replace(re, '<mark style="background:#fef08a;padding:0 1px;border-radius:2px">$1</mark>');
+}
+
+function matches(d, cat, t) {
+  const q = t.toLowerCase();
+  return d.name.toLowerCase().includes(q) || d.desc.toLowerCase().includes(q) || cat.toLowerCase().includes(q);
+}
+
+// ── MODAL ──
+function openModal(dataset, category) {
+  const m = getCatMeta(category);
+  document.getElementById("modal-icon-big").textContent = m.icon;
+  document.getElementById("modal-icon-big").style.background = m.bg;
+  document.getElementById("modal-category-badge").textContent = category;
+  document.getElementById("modal-title").textContent = dataset.name;
+  document.getElementById("modal-desc").textContent = dataset.desc;
+  document.getElementById("modal-url-text").textContent = dataset.url;
+  document.getElementById("modal-visit-btn").href = dataset.url;
+  document.getElementById("modal-overlay").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+function closeModal() {
+  document.getElementById("modal-overlay").classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+// ── EVENTS ──
+document.getElementById("modal-close").onclick = closeModal;
+document.getElementById("modal-overlay").onclick = e => { if (e.target === e.currentTarget) closeModal(); };
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
+
+document.getElementById("modal-copy-btn").onclick = function() {
+  navigator.clipboard.writeText(document.getElementById("modal-url-text").textContent).then(() => {
+    this.textContent = "✅ Copied!";
+    setTimeout(() => this.textContent = "📋 Copy URL", 2000);
+  });
+};
+
+document.getElementById("dataset-search").oninput = function() {
+  searchTerm = this.value.trim();
+  renderDatasets();
+};
+document.getElementById("category-search").oninput = function() {
+  renderSidebar(this.value.trim());
+};
+
+// ── INFO PAGES ──
+const PAGE_IDS = ['about', 'privacy', 'terms'];
+
+function openPage(id) {
+  PAGE_IDS.forEach(p => {
+    document.getElementById('page-' + p).classList.remove('open');
+  });
+  document.getElementById('page-' + id).classList.add('open');
+  // highlight active nav link
+  document.querySelectorAll('.nav-link').forEach(btn => btn.classList.remove('active-page'));
+  const btns = document.querySelectorAll('.nav-link');
+  btns.forEach(btn => {
+    if (btn.getAttribute('onclick') === `openPage('${id}')`) btn.classList.add('active-page');
+  });
+  // scroll page to top
+  document.getElementById('page-' + id).scrollTop = 0;
+}
+
+function closePage(id) {
+  document.getElementById('page-' + id).classList.remove('open');
+  document.querySelectorAll('.nav-link').forEach(btn => btn.classList.remove('active-page'));
+}
+
+// ── INIT ──
+const _total = Object.values(DATASETS).reduce((a,b)=>a+b.length,0);
+document.getElementById("nav-total").textContent = `${_total} datasets · ${Object.keys(DATASETS).length} categories`;
+// update About page live stats
+const aboutEl = document.getElementById("about-ds-count");
+if (aboutEl) aboutEl.textContent = _total + "+";
+renderSidebar();
+renderDatasets();
+</script>
+</body>
+</html>
